@@ -1,0 +1,12 @@
+.createnft-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.nft-form {
+    padding: 20px;
+    border: 1px solid black;
+    width: 400px;
+    margin-left: 20px;
+    background-color: #c8dab1;
+}

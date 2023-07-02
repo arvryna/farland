@@ -3,13 +3,12 @@ import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const New = ({ entity }) => {
+const CreateCollection = ({ contract }) => {
     const [name, setName] = useState('');
     const [symbol, setSymbol] = useState('');
     const [formError, setFormError] = useState(false);
 
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (name.trim() === '' || symbol.trim() === '') {
@@ -17,17 +16,22 @@ const New = ({ entity }) => {
             return;
         }
 
-        // Lets make call to Smart contract over here
-        // also lets show the popup using
+        try {
+            const result = await contract.createCollection(name, symbol)
+            console.log(result)
+            toast.success("Collection created successfully!")
+        } catch (error) {
+            console.error('Error calling contract function:', error);
+            toast.error("Collection creation failed!" + error)
+        }
 
         setFormError(false);
-        toast.success("Collection created successfully!")
     };
 
     return (
         <div className='container'>
             <div className='header'>
-                New {entity}
+                Create Collection
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -57,7 +61,7 @@ const New = ({ entity }) => {
             </form>
             <ToastContainer
                 position="bottom-left"
-                autoClose={1500}
+                autoClose={4000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -71,4 +75,4 @@ const New = ({ entity }) => {
     )
 }
 
-export default New
+export default CreateCollection

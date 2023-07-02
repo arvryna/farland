@@ -5,9 +5,15 @@ import Marketplace from "./page/Marketplace";
 import Stats from "./page/Stats";
 import MyNft from "./page/MyNft";
 import Navbar from "./components/Navbar";
-import New from "./page/New";
+import nftAbi from './nft-abi.json'
+import { ethers } from "ethers";
+import CreateCollection from "./page/CreateCollection"
+import CreateNft from "./page/CreateNft";
 
 const contractAddress = "0x7B4a36E50aF2BC252f9ECF64A37145E7c16D0158"
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const signer = provider.getSigner()
+const contract = new ethers.Contract(contractAddress, nftAbi, signer)
 
 function App() {
   const [account, setAccount] = useState(null)
@@ -23,9 +29,9 @@ function App() {
     <Routes>
       <Route path="/" element={<Marketplace />} />
       <Route path="/nft" element={<MyNft account={account} />} />
-      <Route path="/stats" element={<Stats contractAddress={contractAddress} />} />
-      <Route path="/collections/new" element={<New entity={"Collection"} />} />
-      <Route path="/nft/new" element={<New entity={"NFT"} />} />
+      <Route path="/stats" element={<Stats contract={contract} />} />
+      <Route path="/collections/new" element={<CreateCollection contract={contract} />} />
+      <Route path="/nft/new" element={<CreateNft contract={contract} />} />
     </Routes>
   </>
   );

@@ -1,14 +1,11 @@
 import React from 'react'
 
 import './myNft.css';
-import { ethers } from "ethers";
 import { Link } from 'react-router-dom';
 
 import Gallery from '../components/Gallery'
 
 const MyNfts = ({ account }) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
 
     return (
         <div class="container">

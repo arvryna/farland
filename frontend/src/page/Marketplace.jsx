@@ -3,7 +3,7 @@ import Gallery from '../components/Gallery'
 
 const Marketplace = () => {
     return (<>
-        <h4>Marketplace</h4>
+        <h4>NFT Marketplace</h4>
         <Gallery />
     </>
     )
