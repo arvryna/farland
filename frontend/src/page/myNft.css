@@ -1,0 +1,16 @@
+.nftpage-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between
+}
+
+.buttons {
+    display: flex;
+    margin-right: 10px;
+    padding: 5px;
+    gap: 10px;
+}
