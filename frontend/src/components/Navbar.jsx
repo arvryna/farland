@@ -10,7 +10,6 @@ const Navbar = ({ walletHandler, account }) => {
 
             </div>
             <div className='display-menu'>
-                <Link className="menu" to={"/collections"}>My Collections</Link>
                 <Link className="menu" to={"/nft"}>My Nfts</Link>
                 <Link className="menu" to={"/stats"}>Stats</Link>
                 {account ? (

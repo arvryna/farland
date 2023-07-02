@@ -1,8 +1,9 @@
 .navbar {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     height: 30px;
+    padding: 10px;
     box-shadow: 1px 1px 3px 3px #424040;
 }
 

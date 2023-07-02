@@ -3,10 +3,11 @@ import { Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import Marketplace from "./page/Marketplace";
 import Stats from "./page/Stats";
-import MyCollections from "./page/MyCollections";
 import MyNfts from "./page/MyNfts";
 import { ethers } from "ethers";
 import Navbar from "./components/Navbar";
+
+const contractAddress = "0x7B4a36E50aF2BC252f9ECF64A37145E7c16D0158"
 
 function App() {
   const [account, setAccount] = useState(null)
@@ -15,24 +16,18 @@ function App() {
   const walletHandler = async () => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     setAccount(accounts[0])
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
 
-    loadContracts(signer)
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // const signer = provider.getSigner()
   }
 
-  const loadContracts = async (signer) => {
-    // const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer)
-
-  }
 
   return (<>
     <Navbar walletHandler={walletHandler} account={account} />
     <Routes>
       <Route path="/" element={<Marketplace />} />
-      <Route path="/collections" element={<MyCollections />} />
       <Route path="/nft" element={<MyNfts />} />
-      <Route path="/stats" element={<Stats />} />
+      <Route path="/stats" element={<Stats contractAddress={contractAddress} />} />
     </Routes>
   </>
   );

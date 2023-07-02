@@ -1,8 +1,11 @@
 import React from 'react'
+import Gallery from '../components/Gallery'
 
 const Marketplace = () => {
-    return (
-        <div>Marketplace</div>
+    return (<>
+        <h4>Marketplace</h4>
+        <Gallery />
+    </>
     )
 }
 
