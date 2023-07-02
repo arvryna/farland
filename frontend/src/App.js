@@ -5,6 +5,7 @@ import Marketplace from "./page/Marketplace";
 import Stats from "./page/Stats";
 import MyCollections from "./page/MyCollections";
 import MyNfts from "./page/MyNfts";
+import { ethers } from "ethers";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -12,20 +13,18 @@ function App() {
 
   // Connect to blockchain via Metamask
   const walletHandler = async () => {
-    const ethers = require("ethers")
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     setAccount(accounts[0])
-    // const provider = new ethers.providers.Web3Provider(window.ethereum)
-    // const signer = provider.getSigner()
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
 
-    // Lets load the contract
-    // loadContracts(signer)
+    loadContracts(signer)
   }
 
-  // const loadContracts = async (signer) => {
-  //   const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer)
+  const loadContracts = async (signer) => {
+    // const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer)
 
-  // }
+  }
 
   return (<>
     <Navbar walletHandler={walletHandler} account={account} />
