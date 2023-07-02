@@ -2,7 +2,7 @@
 import { Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import Marketplace from "./page/Marketplace";
-import Stats from "./page/Stats";
+import Events from "./page/Events";
 import MyNft from "./page/MyNft";
 import Navbar from "./components/Navbar";
 import nftAbi from './nft-abi.json'
@@ -29,7 +29,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Marketplace />} />
       <Route path="/nft" element={<MyNft account={account} />} />
-      <Route path="/stats" element={<Stats contract={contract} />} />
+      <Route path="/events" element={<Events contract={contract} />} />
       <Route path="/collections/new" element={<CreateCollection contract={contract} />} />
       <Route path="/nft/new" element={<CreateNft contract={contract} />} />
     </Routes>

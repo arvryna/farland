@@ -11,7 +11,7 @@ const Navbar = ({ walletHandler, account }) => {
             </div>
             <div className='display-menu'>
                 <Link className="menu" to={"/nft"}>My Nfts</Link>
-                <Link className="menu" to={"/stats"}>Stats</Link>
+                <Link className="menu" to={"/events"}>Events</Link>
                 {account ? (
                     <a className='menu' href={`https://sepolia.etherscan.io/address/${account}`}>
                         <button>

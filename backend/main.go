@@ -7,6 +7,10 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/arvryna/farland/internal/dto"
+	"github.com/arvryna/farland/internal/server"
+	"github.com/arvryna/farland/internal/store"
+	"github.com/arvryna/farland/internal/util"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -32,15 +36,26 @@ const NodeSocketURL = "wss://eth-sepolia.g.alchemy.com/v2/24_7GNLl5REZ_MKoQn1quN
 const ContractAddress = "0x7B4a36E50aF2BC252f9ECF64A37145E7c16D0158"
 
 func main() {
-	// Set up connection to Ethereum node
+	// Set up WSS connection to Ethereum node
 	client, err := ethclient.Dial(NodeSocketURL)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("Listening to events on =>", NodeSocketURL)
 
-	// Parse contract ABI
+	store := store.NewStore()
+	server := server.NewServer(store)
+
+	go server.Start(":8080")
+	go eventListener(client, store)
+
+	// Improvement: We can add some logic here to handle graceful shutdown.
+	util.Wait()
+}
+
+func eventListener(client *ethclient.Client, storage *store.Store) {
 
 	// Improvement: Can be fetched at runtime (skipping this to save time)
 	contractABI := `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"symbol","type":"string"}],"name":"CollectionCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"tokenUri","type":"string"}],"name":"TokenMinted","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"name":"createCollection","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"collectionAddress","type":"address"},{"internalType":"string","name":"tokenUri","type":"string"}],"name":"mintNFT","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
@@ -61,11 +76,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Events to look for:
+	// Events to look for.
+
 	newCollectionEvent := contractAbi.Events["CollectionCreated"].ID.Hex()
 	mintEvent := contractAbi.Events["TokenMinted"].ID.Hex()
-
-	// Move this to a separate go-routine and write a redis pusher
 	for {
 		select {
 		case err := <-sub.Err():
@@ -88,6 +102,14 @@ func main() {
 				}
 
 				fmt.Println(">> Collection Created:", collectionCreated)
+
+				// Storing the events
+				storage.AppendEvent(&dto.Event{
+					Name:              collectionCreated.Name,
+					Symbol:            collectionCreated.Symbol,
+					EventType:         dto.EventTypeCollection,
+					CollectionAddress: collectionCreated.CollectionAddress.Hex(),
+				})
 
 			case mintEvent:
 				event := make(map[string]interface{})
