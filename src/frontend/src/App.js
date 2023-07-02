@@ -1,24 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+
+import { Route, Routes } from "react-router-dom";
+import Marketplace from "./page/Marketplace";
+import Stats from "./page/Stats";
+import MyCollections from "./page/MyCollections";
+import MyNfts from "./page/MyNfts";
+import Navbar from "./components/Navbar";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  return (<>
+    <Navbar />
+    <Routes>
+      <Route path="/" element={<Marketplace />} />
+      <Route path="/collections" element={<MyCollections />} />
+      <Route path="/nft" element={<MyNfts />} />
+      <Route path="/stats" element={<Stats />} />
+    </Routes>
+  </>
   );
 }
 
