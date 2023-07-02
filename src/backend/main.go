@@ -27,6 +27,7 @@ type TokenMintedEvent struct {
 	TokenURI          string
 }
 
+// Lets fetch these from the env
 const NodeSocketURL = "wss://eth-sepolia.g.alchemy.com/v2/24_7GNLl5REZ_MKoQn1quNggvsh3F3D4"
 const ContractAddress = "0x7B4a36E50aF2BC252f9ECF64A37145E7c16D0158"
 
@@ -37,17 +38,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Contract address and ABI
-	contractAddress := common.HexToAddress(ContractAddress)
-	contractABI := `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"symbol","type":"string"}],"name":"CollectionCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"tokenUri","type":"string"}],"name":"TokenMinted","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"name":"createCollection","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"collectionAddress","type":"address"},{"internalType":"string","name":"tokenUri","type":"string"}],"name":"mintNFT","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
+	fmt.Println("Listening to events on =>", NodeSocketURL)
 
 	// Parse contract ABI
+
+	// Improvement: Can be fetched at runtime (skipping this to save time)
+	contractABI := `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"symbol","type":"string"}],"name":"CollectionCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"tokenUri","type":"string"}],"name":"TokenMinted","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"name":"createCollection","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"collectionAddress","type":"address"},{"internalType":"string","name":"tokenUri","type":"string"}],"name":"mintNFT","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
 	contractAbi, err := abi.JSON(strings.NewReader(contractABI))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Subscribe to events
+	// Contract address and ABI
+	contractAddress := common.HexToAddress(ContractAddress)
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 	}
@@ -62,6 +65,7 @@ func main() {
 	newCollectionEvent := contractAbi.Events["CollectionCreated"].ID.Hex()
 	mintEvent := contractAbi.Events["TokenMinted"].ID.Hex()
 
+	// Move this to a separate go-routine and write a redis pusher
 	for {
 		select {
 		case err := <-sub.Err():
