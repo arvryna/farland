@@ -1,12 +1,29 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import Gallery from '../components/Gallery'
+import { useEffect, useState } from 'react';
 import './myNft.css';
 
 const MyNfts = ({ account, contractAddress }) => {
+    const [nfts, setNfts] = useState([]);
+
+    useEffect(() => {
+        const fetchNFTs = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/nfts?address=${account}`);
+                const nftResponse = await response.json();
+                nftResponse.sort((a, b) => b.created_at - a.created_at);
+                setNfts(nftResponse);
+            } catch (error) {
+                console.error('Error fetching NFTs:', error);
+            }
+        };
+
+        fetchNFTs();
+    }, []);
 
     return (
-        <div class="container">
+        <div class="container-nftcore">
             {account ? (
                 <div className='nftpage-container'>
                     <div className='header'>
@@ -16,7 +33,12 @@ const MyNfts = ({ account, contractAddress }) => {
                             <Link className="menu" to={"/nft/new"}>Mint NFT</Link>
                         </div>
                     </div>
-                    <Gallery />
+                    {nfts.length > 0 ? (<>
+                        <Gallery nfts={nfts} />
+                    </>) : (
+                        <p>You don't have any NFTs created, please Mint.</p>)
+                    }
+
                 </div>
             ) : (
                 <ui>

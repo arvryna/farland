@@ -5,6 +5,7 @@
     height: 30px;
     padding: 10px;
     box-shadow: 1px 1px 3px 3px #424040;
+    background-color: rgb(220, 241, 101)
 }
 
 navbar .logo {

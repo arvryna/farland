@@ -2,34 +2,23 @@ import React from 'react'
 import './gallery.css';
 
 import Card from './Card';
-// Images => Array of IPFS urls
 
-const Gallery = ({ images }) => {
+const Gallery = ({ nfts }) => {
     return (
         <div class="container">
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-            <Card title={"dfddf"} collection={"dfdfd"} />
-
+            {nfts ? (<>
+                {
+                    nfts.map((nft, index) => (
+                        <Card title={`Token #${nft.token_id}`} collection={nft.collection_address} image={nft.token_uri} />
+                    ))
+                }
+            </>
+            ) : (<>
+                <p>
+                    There are no NFTs created yet!.
+                </p>
+            </>
+            )}
         </div>
     )
 }

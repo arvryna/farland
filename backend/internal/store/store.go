@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/arvryna/farland/internal/dto"
@@ -64,9 +65,9 @@ func (s *Store) GetNFTs(address string) []*dto.NFT {
 // This generated key will be stored as key for the hashmap
 // we store all NFTs of a user in a hash map and all collections in another hashmap
 func getNFTKey(address string) string {
-	return fmt.Sprintf("nft-%s", address)
+	return fmt.Sprintf("nft-%s", strings.ToLower(address))
 }
 
 func getCollectionKey(address string) string {
-	return fmt.Sprintf("collections-%s", address)
+	return fmt.Sprintf("collections-%s", strings.ToLower(address))
 }

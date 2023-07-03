@@ -1,3 +1,7 @@
+.container-nftcore {
+    padding: 10px
+}
+
 .nftpage-container {
     display: flex;
     flex-direction: column;

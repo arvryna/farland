@@ -11,7 +11,7 @@ const CreateNft = ({ contract }) => {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [collectionAddress, setCollectionAddress] = useState('');
-    const [ipfsMeta, setIpfsMeta] = useState(null);
+    const [ipfsMetaCid, setIpfsMetaCid] = useState(null);
 
     const handleImageUpload = async (e) => {
         e.preventDefault();
@@ -25,34 +25,30 @@ const CreateNft = ({ contract }) => {
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await axios.post('https://api.nft.storage/upload', formData, {
+            const imageUploadRes = await axios.post('https://api.nft.storage/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: ipfsAuthtoken,
                 },
             });
 
-            console.log('>>>>>> img upload meta', response.data)
+            const imageCID = imageUploadRes.data.value.cid;
 
-            const imageCID = response.data.value.cid;
-
-            // TODO: Get these meta from the FORM
-            const details = {
+            const metaToUpload = {
                 name: name,
                 description: desc,
-                image: `ipfs://${imageCID}`,
+                image: `https://ipfs.io/ipfs/${imageCID}`,
             };
 
             // Uploading the meta json to Ipfs
-            const responseDetails = await axios.post('https://api.nft.storage/upload', details, {
+            const metaUploadResponse = await axios.post('https://api.nft.storage/upload', metaToUpload, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: ipfsAuthtoken,
                 },
             });
 
-
-            setIpfsMeta(responseDetails.data.value.cid);
+            setIpfsMetaCid(metaUploadResponse.data.value.cid);
             toast.success("Image upload success!")
 
         } catch (error) {
@@ -64,13 +60,13 @@ const CreateNft = ({ contract }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (ipfsMeta === null || ipfsMeta === undefined) {
+        if (ipfsMetaCid === null || ipfsMetaCid === undefined) {
             toast.error("Image is being uploaded to IPFS, please try Submit again in a few seconds")
             return
         }
 
         try {
-            const tokenUri = `https://ipfs.io/ipfs/${ipfsMeta}`
+            const tokenUri = `https://ipfs.io/ipfs/${ipfsMetaCid}`
             console.log(collectionAddress, tokenUri)
             const result = await contract.mintNFT(collectionAddress, tokenUri)
             console.log(result)
