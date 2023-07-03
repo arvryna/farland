@@ -34,9 +34,13 @@ const Events = ({ contract }) => {
 
                         {log.event_type === 1 ? (
                             <p>  * Collection Created:
-                                Name: [{log.name}]
+                                Name: [
+                                <a href={`https://testnets.opensea.io/collection/${log.name.toLowerCase()}`}>
+                                    {log.name}
+                                </a>
+                                ]
                                 Symbol: [{log.symbol}]
-                                Collection Address: <a href={`https://sepolia.etherscan.io/address/${log.collection_address}`}>
+                                <a href={`https://sepolia.etherscan.io/address/${log.collection_address}`}>
                                     {log.collection_address}
                                 </a>
                                 CreatedAt: {convertEpochToBrowserTime(log.created_at)};
@@ -44,8 +48,8 @@ const Events = ({ contract }) => {
                             <p>
                                 * Token Minted:
                                 TokenId: [{log.token_id}]
-                                TokenUri: [{log.token_uri}]
-                                Collection Address: <a href={`https://sepolia.etherscan.io/address/${log.collection_address}`}>
+                                TokenUri: [{log.token_uri}] using
+                                <a href={`https://sepolia.etherscan.io/address/${log.collection_address}`}>
                                     [Collection]
                                 </a>
                                 Created By:

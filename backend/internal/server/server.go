@@ -30,6 +30,16 @@ func (s *Server) registerRoutes(router *gin.Engine) {
 	router.GET("/events", func(c *gin.Context) {
 		c.JSON(http.StatusOK, s.storage.GetEvents())
 	})
+
+	router.GET("/collections", func(c *gin.Context) {
+		address := c.Query("address")
+		c.JSON(http.StatusOK, s.storage.GetCollections(address))
+	})
+
+	router.GET("/nfts", func(c *gin.Context) {
+		address := c.Query("address")
+		c.JSON(http.StatusOK, s.storage.GetNFTs(address))
+	})
 }
 
 func corsMiddleware() gin.HandlerFunc {

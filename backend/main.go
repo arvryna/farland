@@ -111,6 +111,13 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 					CollectionAddress: collectionCreated.CollectionAddress.Hex(),
 				})
 
+				storage.AppendCollection(&dto.Collection{
+					Name:              collectionCreated.Name,
+					Symbol:            collectionCreated.Symbol,
+					CollectionAddress: collectionCreated.CollectionAddress.Hex(),
+					OwnerAddress:      "TODO", // TODO, fetch owner address from the contract event
+				})
+
 			case mintEvent:
 				event := make(map[string]interface{})
 				err := contractAbi.UnpackIntoMap(event, "TokenMinted", vLog.Data)
@@ -130,6 +137,13 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 
 				// Storing the events
 				storage.AppendEvent(&dto.Event{
+					TokenId:           mintedEvent.TokenID.Int64(),
+					TokenUri:          mintedEvent.TokenURI,
+					OwnerAddress:      mintedEvent.Recipient.Hex(),
+					CollectionAddress: mintedEvent.CollectionAddress.Hex(),
+				})
+
+				storage.AppendNFT(&dto.NFT{
 					TokenId:           mintedEvent.TokenID.Int64(),
 					TokenUri:          mintedEvent.TokenURI,
 					OwnerAddress:      mintedEvent.Recipient.Hex(),

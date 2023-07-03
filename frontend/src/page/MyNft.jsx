@@ -1,9 +1,7 @@
 import React from 'react'
-
-import './myNft.css';
 import { Link } from 'react-router-dom';
-
 import Gallery from '../components/Gallery'
+import './myNft.css';
 
 const MyNfts = ({ account, contractAddress }) => {
 
