@@ -40,6 +40,11 @@ func (s *Server) registerRoutes(router *gin.Engine) {
 		address := c.Query("address")
 		c.JSON(http.StatusOK, s.storage.GetNFTs(address))
 	})
+
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "pong"})
+	})
+
 }
 
 func corsMiddleware() gin.HandlerFunc {

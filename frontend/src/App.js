@@ -31,7 +31,7 @@ function App() {
       <Route path="/nft" element={<MyNft account={account} contractAddress={contractAddress} />} />
       <Route path="/events" element={<Events contract={contract} />} />
       <Route path="/collections/new" element={<CreateCollection contract={contract} />} />
-      <Route path="/nft/new" element={<CreateNft contract={contract} />} />
+      <Route path="/nft/new" element={<CreateNft contract={contract} account={account} />} />
     </Routes>
   </>
   );

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './createNft.css'
@@ -7,11 +7,28 @@ import { NFTStorage } from 'nft.storage'
 import { ScaleLoader } from 'react-spinners';
 
 const ipfsAuthtoken = process.env.REACT_APP_NFT_STORAGE_TOKEN
+const HOST = process.env.REACT_APP_HOST
 
-const CreateNft = ({ contract }) => {
+const CreateNft = ({ contract, account }) => {
     const [collectionAddress, setCollectionAddress] = useState('');
     const [fileCid, setFileCid] = useState(null);
     const [loading, setLoading] = useState(false)
+    const [collections, setCollections] = useState([]);
+
+    useEffect(() => {
+        const fetchNFTs = async () => {
+            try {
+                const response = await fetch(`${HOST}/collections?address=${account}`);
+                const nftResponse = await response.json();
+                nftResponse.sort((a, b) => b.created_at - a.created_at);
+                setCollections(nftResponse);
+            } catch (error) {
+                console.error('Error fetching NFTs:', error);
+            }
+        };
+
+        fetchNFTs();
+    }, [collections, account]);
 
     const handleImageUpload = async (e) => {
         e.preventDefault();
@@ -74,12 +91,17 @@ const CreateNft = ({ contract }) => {
             <form className='nft-form' onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="collection">Collection: </label>
-                    <input
-                        type="text"
+                    <select
                         id="collection"
                         value={collectionAddress}
                         onChange={(e) => setCollectionAddress(e.target.value)}
-                    />
+                    >
+                        {collections.map((collection) => (
+                            <option key={collection.name} value={collection.collection_address}>
+                                {collection.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div>
