@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 import CreateCollection from "./page/CreateCollection"
 import CreateNft from "./page/CreateNft";
 
-const contractAddress = "0x7B4a36E50aF2BC252f9ECF64A37145E7c16D0158"
+const contractAddress = "0xdd603b907512369155621b80a52d5da6af0b5c7e"
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
 const contract = new ethers.Contract(contractAddress, nftAbi, signer)

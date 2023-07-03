@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/arvryna/farland/internal/dto"
+	"github.com/arvryna/farland/internal/nft"
 	"github.com/arvryna/farland/internal/server"
 	"github.com/arvryna/farland/internal/store"
 	"github.com/arvryna/farland/internal/util"
@@ -18,22 +19,9 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-type CollectionCreatedEvent struct {
-	CollectionAddress common.Address
-	Name              string
-	Symbol            string
-}
-
-type TokenMintedEvent struct {
-	CollectionAddress common.Address
-	Recipient         common.Address
-	TokenID           *big.Int
-	TokenURI          string
-}
-
 // Lets fetch these from the env
 const NodeSocketURL = "wss://eth-sepolia.g.alchemy.com/v2/24_7GNLl5REZ_MKoQn1quNggvsh3F3D4"
-const ContractAddress = "0x7B4a36E50aF2BC252f9ECF64A37145E7c16D0158"
+const ContractAddress = "0xdd603b907512369155621b80a52d5da6af0b5c7e"
 
 func main() {
 	// Set up WSS connection to Ethereum node
@@ -56,10 +44,8 @@ func main() {
 }
 
 func eventListener(client *ethclient.Client, storage *store.Store) {
-
 	// Improvement: Can be fetched at runtime (skipping this to save time)
-	contractABI := `[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"symbol","type":"string"}],"name":"CollectionCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"collectionAddress","type":"address"},{"indexed":false,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"tokenUri","type":"string"}],"name":"TokenMinted","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"name":"createCollection","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"collectionAddress","type":"address"},{"internalType":"string","name":"tokenUri","type":"string"}],"name":"mintNFT","outputs":[],"stateMutability":"nonpayable","type":"function"}]`
-	contractAbi, err := abi.JSON(strings.NewReader(contractABI))
+	contractAbi, err := abi.JSON(strings.NewReader(nft.ContractABI))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,10 +81,11 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 					continue
 				}
 
-				collectionCreated := CollectionCreatedEvent{
-					CollectionAddress: event["collectionAddress"].(common.Address),
+				collectionCreated := dto.CollectionCreatedEvent{
 					Name:              event["name"].(string),
 					Symbol:            event["symbol"].(string),
+					CollectionAddress: event["collectionAddress"].(common.Address),
+					Recipient:         event["recipient"].(common.Address),
 				}
 
 				fmt.Println(">> Collection Created:", collectionCreated)
@@ -109,13 +96,14 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 					Symbol:            collectionCreated.Symbol,
 					EventType:         dto.EventTypeCollection,
 					CollectionAddress: collectionCreated.CollectionAddress.Hex(),
+					OwnerAddress:      collectionCreated.Recipient.Hex(),
 				})
 
 				storage.AppendCollection(&dto.Collection{
 					Name:              collectionCreated.Name,
 					Symbol:            collectionCreated.Symbol,
 					CollectionAddress: collectionCreated.CollectionAddress.Hex(),
-					OwnerAddress:      "TODO", // TODO, fetch owner address from the contract event
+					OwnerAddress:      collectionCreated.Recipient.Hex(),
 				})
 
 			case mintEvent:
@@ -126,7 +114,7 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 					continue
 				}
 
-				mintedEvent := TokenMintedEvent{
+				mintedEvent := dto.TokenMintedEvent{
 					TokenID:           event["tokenId"].(*big.Int),
 					TokenURI:          event["tokenUri"].(string),
 					CollectionAddress: event["collectionAddress"].(common.Address),

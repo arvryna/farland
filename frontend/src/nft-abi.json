@@ -19,6 +19,12 @@
 				"internalType": "string",
 				"name": "symbol",
 				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
 			}
 		],
 		"name": "CollectionCreated",
