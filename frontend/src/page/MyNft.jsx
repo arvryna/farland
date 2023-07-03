@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import Gallery from '../components/Gallery'
 
-const MyNfts = ({ account }) => {
+const MyNfts = ({ account, contractAddress }) => {
 
     return (
         <div class="container">
@@ -21,7 +21,17 @@ const MyNfts = ({ account }) => {
                     <Gallery />
                 </div>
             ) : (
-                <h7>Connect your wallet to see NFTs that you've minted.</h7>
+                <ui>
+                    <h7>Please connect your wallet to see NFTs that you've minted.</h7>
+                    <li>We are using <a href="https://sepoliafaucet.com/">Sepolia</a> Testnet</li>
+                    <li>Please use Sepolia network in your Metamask(Preferably) wallet</li>
+                    <li>
+                        Deployed Contract:
+                        <a href={`https://sepolia.etherscan.io/address/${contractAddress}`}>
+                            {contractAddress}
+                        </a>
+                    </li>
+                </ui>
             )}
         </div>
     )

@@ -127,6 +127,14 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 				}
 
 				fmt.Println(">> New NFT Minted", mintedEvent)
+
+				// Storing the events
+				storage.AppendEvent(&dto.Event{
+					TokenId:           mintedEvent.TokenID.Int64(),
+					TokenUri:          mintedEvent.TokenURI,
+					OwnerAddress:      mintedEvent.Recipient.Hex(),
+					CollectionAddress: mintedEvent.CollectionAddress.Hex(),
+				})
 			}
 		}
 	}

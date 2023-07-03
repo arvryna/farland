@@ -6,7 +6,7 @@ import './createNft.css'
 
 const CreateNft = ({ contract }) => {
     const [collectionAddress, setCollectionAddress] = useState('');
-    const [tokenUri, setTokenUri] = useState('');
+    const [tokenUri, setTokenUri] = useState('ipfs://test/123');
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -18,10 +18,12 @@ const CreateNft = ({ contract }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        console.log(collectionAddress, tokenUri)
+
         try {
             const result = await contract.mintNFT(collectionAddress, tokenUri)
             console.log(result)
-            toast.success("NFT Minte request accepted in blockchain!")
+            toast.success("NFT Mint request accepted in blockchain!")
         } catch (error) {
             console.error('Error calling contract function:', error);
             toast.error("NFT creation failed!" + error)
@@ -43,12 +45,13 @@ const CreateNft = ({ contract }) => {
             </div>
             <form className='nft-form' onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="collection">Collection Name:</label>
-                    <select id="collection">
-                        <option value="collection1">Collection 1</option>
-                        <option value="collection2">Collection 2</option>
-                        <option value="collection3">Collection 3</option>
-                    </select>
+                    <label htmlFor="collection">Collection: </label>
+                    <input
+                        type="text"
+                        id="collectione"
+                        value={collectionAddress}
+                        onChange={(e) => setCollectionAddress(e.target.value)}
+                    />
                 </div>
 
                 <div>
@@ -58,6 +61,18 @@ const CreateNft = ({ contract }) => {
 
                 <button type="submit">Submit</button>
             </form>
+            <ToastContainer
+                position="bottom-left"
+                autoClose={4000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </div>
     )
 }

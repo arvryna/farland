@@ -28,7 +28,7 @@ function App() {
     <Navbar walletHandler={walletHandler} account={account} />
     <Routes>
       <Route path="/" element={<Marketplace />} />
-      <Route path="/nft" element={<MyNft account={account} />} />
+      <Route path="/nft" element={<MyNft account={account} contractAddress={contractAddress} />} />
       <Route path="/events" element={<Events contract={contract} />} />
       <Route path="/collections/new" element={<CreateCollection contract={contract} />} />
       <Route path="/nft/new" element={<CreateNft contract={contract} />} />
