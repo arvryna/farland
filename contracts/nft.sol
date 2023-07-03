@@ -9,12 +9,12 @@ contract NFTCollectionCreator is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    event CollectionCreated(address collectionAddress, string name, string symbol);
+    event CollectionCreated(address collectionAddress, string name, string symbol, address recipient);
     event TokenMinted(address collectionAddress, address recipient, uint256 tokenId, string tokenUri);
 
     function createCollection(string memory name, string memory symbol) external {
         NFTCollection collection = new NFTCollection(name, symbol, msg.sender);
-        emit CollectionCreated(address(collection), name, symbol);
+        emit CollectionCreated(address(collection), name, symbol, msg.sender);
     }
 
     function mintNFT(address collectionAddress, string memory tokenUri) external nonReentrant {

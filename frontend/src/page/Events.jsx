@@ -4,13 +4,15 @@ import './events.css'
 
 const convertEpochToBrowserTime = epochTimestamp => new Date(epochTimestamp * 1000).toLocaleString();
 
+const HOST = process.env.REACT_APP_HOST
+
 const Events = ({ contract }) => {
     const [eventLogs, setEventLogs] = useState([]);
 
     useEffect(() => {
         const fetchEventLogs = async () => {
             try {
-                const response = await fetch('http://localhost:8080/events');
+                const response = await fetch(HOST + '/events');
                 const events = await response.json();
                 events.sort((a, b) => b.created_at - a.created_at);
                 setEventLogs(events);

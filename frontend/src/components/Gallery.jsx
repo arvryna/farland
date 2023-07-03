@@ -9,7 +9,14 @@ const Gallery = ({ nfts }) => {
             {nfts ? (<>
                 {
                     nfts.map((nft, index) => (
-                        <Card title={`Token #${nft.token_id}`} collection={nft.collection_address} image={nft.token_uri} />
+                        (nft.event_type === undefined || nft.event_type === 2) ? (
+                            <Card
+                                key={index}
+                                title={`Token #${nft.token_id}`}
+                                collection={nft.collection_address.slice(0, 20)}
+                                image={nft.token_uri}
+                            />
+                        ) : null
                     ))
                 }
             </>

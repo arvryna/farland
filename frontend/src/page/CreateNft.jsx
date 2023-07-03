@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './createNft.css'
-import axios from 'axios';
+import { NFTStorage } from 'nft.storage'
+import { ScaleLoader } from 'react-spinners';
 
-const ipfsAuthtoken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQwZjk4Yjg4QjM3NjhlNDU5MzhhZjA4OEU3Njg0YjM1MDg1NWZlODgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY4ODM2OTU1NTc5OSwibmFtZSI6ImZhcmxhbmQifQ.UXzMBQ9eicfNLGrohv1O6coBoyToqwK_xz54Pc9uJjM'
+const ipfsAuthtoken = process.env.REACT_APP_NFT_STORAGE_TOKEN
 
 const CreateNft = ({ contract }) => {
-    const [name, setName] = useState('');
-    const [desc, setDesc] = useState('');
     const [collectionAddress, setCollectionAddress] = useState('');
-    const [ipfsMetaCid, setIpfsMetaCid] = useState(null);
+    const [fileCid, setFileCid] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     const handleImageUpload = async (e) => {
         e.preventDefault();
@@ -21,52 +21,33 @@ const CreateNft = ({ contract }) => {
             return
         }
 
+        setLoading(true)
+
         try {
-            const formData = new FormData();
-            formData.append('file', file);
+            const authToken = ipfsAuthtoken;
+            const client = new NFTStorage({ token: authToken });
+            const fileCID = await client.storeBlob(file);
 
-            const imageUploadRes = await axios.post('https://api.nft.storage/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: ipfsAuthtoken,
-                },
-            });
-
-            const imageCID = imageUploadRes.data.value.cid;
-
-            const metaToUpload = {
-                name: name,
-                description: desc,
-                image: `https://ipfs.io/ipfs/${imageCID}`,
-            };
-
-            // Uploading the meta json to Ipfs
-            const metaUploadResponse = await axios.post('https://api.nft.storage/upload', metaToUpload, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: ipfsAuthtoken,
-                },
-            });
-
-            setIpfsMetaCid(metaUploadResponse.data.value.cid);
-            toast.success("Image upload success!")
-
+            setFileCid(fileCID)
+            setLoading(false)
+            toast.success("Image uploaded.")
         } catch (error) {
-            console.error('Error uploading image to IPFS:', error);
-            toast.error("Image upload failed!" + error)
+            console.error('Error uploading file to NFT.Storage:', error);
+            toast.error("Image upload failed" + error)
         }
+
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (ipfsMetaCid === null || ipfsMetaCid === undefined) {
+        if (fileCid === null || fileCid === undefined) {
             toast.error("Image is being uploaded to IPFS, please try Submit again in a few seconds")
             return
         }
 
         try {
-            const tokenUri = `https://ipfs.io/ipfs/${ipfsMetaCid}`
+            const tokenUri = `https://ipfs.io/ipfs/${fileCid}`
             console.log(collectionAddress, tokenUri)
             const result = await contract.mintNFT(collectionAddress, tokenUri)
             console.log(result)
@@ -92,24 +73,6 @@ const CreateNft = ({ contract }) => {
             </div>
             <form className='nft-form' onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="name">Name: </label>
-                    <input
-                        type="text"
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="desc">Description: </label>
-                    <input
-                        type="text"
-                        id="desc"
-                        value={desc}
-                        onChange={(e) => setDesc(e.target.value)}
-                    />
-                </div>
-                <div>
                     <label htmlFor="collection">Collection: </label>
                     <input
                         type="text"
@@ -123,9 +86,12 @@ const CreateNft = ({ contract }) => {
                     <label htmlFor="image">Choose an image:</label>
                     <input type="file" id="image" onChange={handleImageUpload} />
                 </div>
+                {loading ? (
+                    <ScaleLoader color={'#36d7b7'} loading={loading} size={25} />
+                ) : <button type="submit">Submit</button>}
 
-                <button type="submit">Submit</button>
             </form>
+
             <ToastContainer
                 position="bottom-left"
                 autoClose={4000}

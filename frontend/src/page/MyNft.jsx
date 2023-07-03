@@ -4,13 +4,15 @@ import Gallery from '../components/Gallery'
 import { useEffect, useState } from 'react';
 import './myNft.css';
 
+const HOST = process.env.REACT_APP_HOST
+
 const MyNfts = ({ account, contractAddress }) => {
     const [nfts, setNfts] = useState([]);
 
     useEffect(() => {
         const fetchNFTs = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/nfts?address=${account}`);
+                const response = await fetch(`${HOST}/nfts?address=${account}`);
                 const nftResponse = await response.json();
                 nftResponse.sort((a, b) => b.created_at - a.created_at);
                 setNfts(nftResponse);
@@ -20,7 +22,7 @@ const MyNfts = ({ account, contractAddress }) => {
         };
 
         fetchNFTs();
-    }, []);
+    }, [account]);
 
     return (
         <div class="container-nftcore">

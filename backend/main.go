@@ -139,6 +139,7 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 				storage.AppendEvent(&dto.Event{
 					TokenId:           mintedEvent.TokenID.Int64(),
 					TokenUri:          mintedEvent.TokenURI,
+					EventType:         dto.EventTypeNFTMint,
 					OwnerAddress:      mintedEvent.Recipient.Hex(),
 					CollectionAddress: mintedEvent.CollectionAddress.Hex(),
 				})
