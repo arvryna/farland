@@ -20,15 +20,18 @@ const CreateNft = ({ contract, account }) => {
             try {
                 const response = await fetch(`${HOST}/collections?address=${account}`);
                 const nftResponse = await response.json();
-                nftResponse.sort((a, b) => b.created_at - a.created_at);
-                setCollections(nftResponse);
+                if (nftResponse !== null) {
+                    nftResponse.sort((a, b) => b.created_at - a.created_at);
+                    setCollections(nftResponse);
+                }
+
             } catch (error) {
                 console.error('Error fetching NFTs:', error);
             }
         };
 
         fetchNFTs();
-    }, [collections, account]);
+    }, [account]);
 
     const handleImageUpload = async (e) => {
         e.preventDefault();
@@ -41,10 +44,8 @@ const CreateNft = ({ contract, account }) => {
         setLoading(true)
 
         try {
-            const authToken = ipfsAuthtoken;
-            const client = new NFTStorage({ token: authToken });
+            const client = new NFTStorage({ token: ipfsAuthtoken });
             const fileCID = await client.storeBlob(file);
-
             setFileCid(fileCID)
             setLoading(false)
             toast.success("Image uploaded.")
@@ -96,11 +97,15 @@ const CreateNft = ({ contract, account }) => {
                         value={collectionAddress}
                         onChange={(e) => setCollectionAddress(e.target.value)}
                     >
-                        {collections.map((collection) => (
-                            <option key={collection.name} value={collection.collection_address}>
-                                {collection.name}
-                            </option>
-                        ))}
+                        <option value="">Select a collection</option>
+                        {collections.map((collection) => {
+                            console.log(collection);
+                            return (
+                                <option key={collection.collection_address} value={collection.collection_address}>
+                                    {collection.name}
+                                </option>
+                            );
+                        })}
                     </select>
                 </div>
 

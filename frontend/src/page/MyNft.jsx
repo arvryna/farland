@@ -14,8 +14,11 @@ const MyNfts = ({ account, contractAddress }) => {
             try {
                 const response = await fetch(`${HOST}/nfts?address=${account}`);
                 const nftResponse = await response.json();
-                nftResponse.sort((a, b) => b.created_at - a.created_at);
-                setNfts(nftResponse);
+                if (nftResponse !== null) {
+                    nftResponse.sort((a, b) => b.created_at - a.created_at);
+                    setNfts(nftResponse);
+                }
+
             } catch (error) {
                 console.error('Error fetching NFTs:', error);
             }

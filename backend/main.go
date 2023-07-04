@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"os"
 	"strings"
 
 	"github.com/arvryna/farland/internal/dto"
@@ -17,21 +18,28 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/joho/godotenv"
 )
 
 // Lets fetch these from the env
-const NodeSocketURL = "wss://eth-sepolia.g.alchemy.com/v2/24_7GNLl5REZ_MKoQn1quNggvsh3F3D4"
 const ContractAddress = "0xdd603b907512369155621b80a52d5da6af0b5c7e"
 
 func main() {
-	// Set up WSS connection to Ethereum node
-	client, err := ethclient.Dial(NodeSocketURL)
-
-	if err != nil {
-		log.Fatal(err)
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(".env not found")
 	}
 
-	fmt.Println("Listening to events on =>", NodeSocketURL)
+	nodeToken := os.Getenv("NODE_TOKEN")
+	nodeSocketURL := "wss://eth-sepolia.g.alchemy.com/v2/" + nodeToken
+
+	// Set up WSS connection to Ethereum node
+	client, err := ethclient.Dial(nodeSocketURL)
+
+	if err != nil {
+		log.Fatal("can't start the node", err)
+	}
+
+	fmt.Println("Listening to events on =>", nodeSocketURL)
 
 	store := store.NewStore()
 	server := server.NewServer(store)
@@ -44,10 +52,9 @@ func main() {
 }
 
 func eventListener(client *ethclient.Client, storage *store.Store) {
-	// Improvement: Can be fetched at runtime (skipping this to save time)
 	contractAbi, err := abi.JSON(strings.NewReader(nft.ContractABI))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("can't parse contract abi", err)
 	}
 
 	// Contract address and ABI
@@ -59,7 +66,7 @@ func eventListener(client *ethclient.Client, storage *store.Store) {
 	logs := make(chan types.Log)
 	sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Subscription failed: ", err)
 	}
 
 	// Events to look for.

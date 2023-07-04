@@ -14,8 +14,11 @@ const Events = ({ contract }) => {
             try {
                 const response = await fetch(HOST + '/events');
                 const events = await response.json();
-                events.sort((a, b) => b.created_at - a.created_at);
-                setEventLogs(events);
+                if (events !== null) {
+                    events.sort((a, b) => b.created_at - a.created_at);
+                    setEventLogs(events);
+                }
+
             } catch (error) {
                 console.error('Error fetching event logs:', error);
             }

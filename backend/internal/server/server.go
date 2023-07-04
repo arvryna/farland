@@ -27,21 +27,21 @@ func (s *Server) Start(port string) {
 }
 
 func (s *Server) registerRoutes(router *gin.Engine) {
-	router.GET("/events", func(c *gin.Context) {
+	router.GET("/api/events", func(c *gin.Context) {
 		c.JSON(http.StatusOK, s.storage.GetEvents())
 	})
 
-	router.GET("/collections", func(c *gin.Context) {
+	router.GET("/api/collections", func(c *gin.Context) {
 		address := c.Query("address")
 		c.JSON(http.StatusOK, s.storage.GetCollections(address))
 	})
 
-	router.GET("/nfts", func(c *gin.Context) {
+	router.GET("/api/nfts", func(c *gin.Context) {
 		address := c.Query("address")
 		c.JSON(http.StatusOK, s.storage.GetNFTs(address))
 	})
 
-	router.GET("/ping", func(c *gin.Context) {
+	router.GET("/api/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
 
