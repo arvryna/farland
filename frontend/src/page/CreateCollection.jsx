@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './createCollection.css'
 
 const CreateCollection = ({ contract }) => {
     const [name, setName] = useState('');
@@ -29,12 +30,17 @@ const CreateCollection = ({ contract }) => {
     };
 
     return (
-        <div className='container'>
-            <div className='header'>
-                Create Collection
+        <div className='collection-container'>
+            <div className='notes'>
+                <h2>Create Collection</h2>
+                <ul>
+                    <h4>Please Note:</h4>
+                    <li>Once collection is created, it will appear in dropdown when you mint NFT</li>
+                    <li>Also the collection details will appear in the events page, with chain txId</li>
+                    <li>Events page show the details, as soon as the transaction is confirmed.</li>
+                </ul>
             </div>
-
-            <form onSubmit={handleSubmit}>
+            <form className="collection-form" onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="name">Name:</label>
                     <input

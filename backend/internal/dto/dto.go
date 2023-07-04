@@ -1,3 +1,5 @@
+// Data transfer objects
+
 package dto
 
 import (

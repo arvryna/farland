@@ -21,7 +21,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Lets fetch these from the env
 const ContractAddress = "0xdd603b907512369155621b80a52d5da6af0b5c7e"
 
 func main() {

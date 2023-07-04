@@ -26,6 +26,8 @@ func (s *Server) Start(port string) {
 	router.Run(port)
 }
 
+// ** Routes **
+
 func (s *Server) registerRoutes(router *gin.Engine) {
 	router.GET("/api/events", func(c *gin.Context) {
 		c.JSON(http.StatusOK, s.storage.GetEvents())
@@ -46,6 +48,8 @@ func (s *Server) registerRoutes(router *gin.Engine) {
 	})
 
 }
+
+// ** Middlewares **
 
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {

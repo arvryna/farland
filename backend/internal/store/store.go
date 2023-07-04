@@ -27,6 +27,8 @@ func (s *Store) AppendEvent(event *dto.Event) {
 
 	// we can safely update this without any locks,
 	// since only one single thread is writing this store
+	// Improvement: When we decide to scale our socket listener with multiple workers
+	// then we can implement lock here.
 	s.events = append(s.events, event)
 }
 
